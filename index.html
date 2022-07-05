@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scaleuser-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <title>Red neuronal monocapa</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-1 h1">Red neuronal monocapa</span>
+    </div>
+</nav>
+<div class="container">
+    <br/>
+    <div class="row">
+        <div class="col">
+            <label for="network_type">Tipo de red</label>
+            <select class="form-control my-2" id="network_type" onchange="getNetworkType()">
+                <option value="" style="display: none">
+                    Seleccione una opción...
+                </option>
+                <option value="multi">Monocapa</option>
+            </select>
+        </div>
+        <div class="col">
+            <div class="col">
+                <label for="neuron_type">Tipo de neurona</label>
+                <select class="form-control my-2" id="neuron_type" onchange="getNeuronType()">
+                    <option value="" style="display: none">
+                        Seleccione una opción...
+                    </option>
+                    <option value="perceptron">Perceptron</option>
+                    <option value="adaline">Adaline</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="row">
+         <div class="col">
+             <label for="act_function">Función de activación</label>
+             <select class="form-control my-2" id="act_function" onchange="get_act_function()">
+                 <option value="" style="display: none">
+                     Seleccione una opción...
+                 </option>
+                 <option value="escalation">Escalón</option>
+             </select>
+         </div>
+     </div>-->
+    <h3>Parámetros de entrenamiento</h3>
+    <div class="row mb-3 mt-3">
+        <div class="col">
+            <label for="iterations_qty">Cantidad de iteraciones</label>
+            <input id="iterations_qty" class="form-control" type="number" onkeyup="get_iterations_qty()"/>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <label for="learning_rate">Rata de aprendizaje</label>
+            <input id="learning_rate" class="form-control" placeholder="Valor mayor que 0 y menor o igual a 1"
+                   type="number"
+                   onkeyup="get_learning_rate()"/>
+        </div>
+        <div class="col">
+            <label for="max_allowed_error">Error máximo permitido</label>
+            <input id="max_allowed_error" class="form-control" type="number" onkeyup="get_max_allowed_errors()"/>
+        </div>
+    </div>
+    <div class="mb-4 mt-4">
+        <h3 for="upload_file" class="form-label">Cargar archivo <span class="h6">(.txt)</span></h3>
+        <input class="form-control mt-3" accept="text/plain" onchange="uploadFile(this.files)" type="file"
+               id="upload_file">
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">Entradas: <span
+                class="badge bg-primary rounded-pill" id="inputs_qty"></span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Patrones: <span
+                class="badge bg-primary rounded-pill" id="patterns_qty"></span></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">Salidas: <span
+                class="badge bg-primary rounded-pill" id="outputs_qty"></span></li>
+    </ul>
+    <br/>
+    <div class="position-absolute start-50 translate-middle mt-3">
+        <button class="btn btn-outline-success" id="btn_start" type="button" onclick="start()">Empezar</button>
+    </div>
+    <br/>
+    <!--<div class="mt-3 mb-3">
+        <h3 class="form-label">Resultados</h3>
+        <ul class="list-group mt-3">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Número de iteraciones: <span class="badge bg-primary rounded-pill" id="iterations_counted"></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Error de iteraciones: <span class="badge bg-primary rounded-pill" id="iterations_errors"></span>
+            </li>
+        </ul>
+        <br/>
+        <div id="result" class="mt-4">
+            <div class="row justify-content-center">
+               <div class="col">
+                     <h4>Gráfica salida esperada vs salida real <b>(yr / yd)</b></h4>
+                      <canvas id="yd_vs_yr"></canvas>
+                </div>-->
+    <div class="col">
+        <h4>Gráfica salida error de iteración vs iteraciones </h4>
+        <canvas id="iterations_errors_vs_iterations"></canvas>
+    </div>
+</div>
+</div>
+</div>
+<!-- <div class="mt-1">
+     <h3>Simulación</h3>
+     <div class="row mb-4 mt-4">
+         <div class="col">
+             <p>Entrada 1</p>
+             <input id="input_1" class="form-control" type="number"/>
+         </div>
+         <div class="col">
+             <p>Entrada 2</p>
+
+             <input id="input_2" class="form-control" type="number"/>
+         </div>
+         <div class="col">
+             <p>Entrada 3</p>
+
+             <input id="input_3" class="form-control" type="number"/>
+         </div>
+         <div class="col">
+             <p>Entrada 4</p>
+
+             <input id="input_4" class="form-control" type="number"/>
+         </div>
+         <div class="col">
+             <p>Salida</p>
+             <input id="simulation_results" class="form-control" type="number" disabled/>
+         </div>
+     </div>
+     <div class="text-center">
+         <button class="btn btn-warning" onclick="print_simulation_results()">
+             Simular
+         </button>
+     </div>
+     <hr>
+ </div>
+ -->
+</div>
+
+<script type="text/javascript">
+    let chart;
+    let create_chart = async () => {
+        let ctx = document.getElementById('yd_vs_yr').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: outputs,
+                datasets: [{
+                    label: 'YD vs YR',
+                    backgroundColor: 'rgb(49,166,116)',
+                    borderColor: 'rgb(49,166,116)',
+                    fill: false,
+                    data: real_outputs
+                }]
+            },
+
+            options: {
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'YD',
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'YR',
+                        }
+                    }]
+                }
+            }
+        });
+        await sleep(2000);
+    }
+
+    async function create_chart_errors() {
+
+        let ctx = document.getElementById('iterations_errors_vs_iterations').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: iterations,
+                datasets: [{
+                    label: 'Error de iteraciones vs Iteraciones',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    fill: false,
+                    data: total_iterations_error_array
+                }]
+            },
+
+            options: {
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Iteraciones',
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Error de iteraciones',
+                        }
+                    }]
+                }
+            }
+        });
+        await sleep(1000);
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+</script>
+<script src="multilayer.js"></script>
+</body>
+
+</html>
